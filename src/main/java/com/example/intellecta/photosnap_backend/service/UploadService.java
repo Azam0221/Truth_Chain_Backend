@@ -74,8 +74,7 @@ public class UploadService {
             String lon = rootNode.has("long") ? rootNode.get("long").asText() : "0.0";
             String combinedGps = lat + ", " + lon;
 
-           // String deviceId = rootNode.has("deviceId") ? rootNode.get("deviceId").asText() : "UNKNOWN";
-           // String gps = rootNode.has("gps") ? rootNode.get("gps").asText() : "UNKNOWN";
+
 
             EvidenceRecord record = new EvidenceRecord();
             record.setContentHash(imageHash);

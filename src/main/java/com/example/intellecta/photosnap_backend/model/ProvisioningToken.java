@@ -15,6 +15,7 @@ public class ProvisioningToken {
     @Column(unique = true)
     private String token;
 
+
     private boolean isUsed;
 
     private LocalDateTime expiryTime;

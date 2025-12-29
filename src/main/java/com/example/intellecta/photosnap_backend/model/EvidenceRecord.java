@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Data
 public class EvidenceRecord {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
