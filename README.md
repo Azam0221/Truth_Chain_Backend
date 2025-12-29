@@ -46,14 +46,14 @@ Used by the React frontend to check if a file is authentic.
     }
     ```
 
-## 🏗 Architecture Flow
+## Architecture Flow
 
 1.  **Ingest:** Receives `MultipartFile` and `Signature` from Android.
 2.  **Hash:** Calculates the server-side SHA-256 hash of the received file to ensure integrity during transit.
 3.  **Pin:** Uploads the file to **Pinata (IPFS)** and retrieves the CID (Content Identifier).
 4.  **Persist:** Saves the `{Hash, CID, Signature, Metadata}` tuple to the database.
 
-## 📦 Getting Started
+## Getting Started
 
 ### Prerequisites
 * Java 17 SDK
@@ -77,5 +77,3 @@ Used by the React frontend to check if a file is authentic.
     mvn spring-boot:run
     ```
 
----
-*Built for Hackathon 2025*
