@@ -1,15 +1,15 @@
-# TruthChain - Backend Ledger & Trust Anchor 🛡️🔗
+# TruthChain - Backend Ledger & Trust Anchor 
 
 The **TruthChain Backend** serves as the central immutable ledger and orchestration layer for the platform. It acts as a bridge between the secure hardware client (Android) and the decentralized storage network (IPFS/Pinata).
 
-## 🚀 Key Responsibilities
+## Key Responsibilities
 
 * **Trust Bridge:** Receives cryptographically signed evidence from trusted Android hardware.
 * **Decentralized Storage (IPFS):** Automatically pins uploaded evidence to **IPFS via Pinata**, ensuring the media is immutable and uncensorable.
 * **Verification Engine:** Exposes public endpoints to verify asset integrity. If an image hash is queried, it returns the associated hardware signature and metadata.
 * **Metadata Registry:** Stores the "Proof of Presence" data (GPS coordinates, Timestamp, Device ID) linked to the image hash.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 * **Framework:** Spring Boot 3 (Java 17)
 * **Build Tool:** Maven / Gradle
@@ -18,7 +18,7 @@ The **TruthChain Backend** serves as the central immutable ledger and orchestrat
 * **Deployment:** Railway
 * **Security:** SHA-256 Hash Verification
 
-## 📡 API Documentation
+## API Documentation
 
 ### 1. Upload Evidence (Internal/Android)
 Receives the raw image and the hardware-backed signature.
