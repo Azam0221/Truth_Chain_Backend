@@ -13,7 +13,7 @@ The **TruthChain Backend** serves as the central immutable ledger and orchestrat
 
 * **Framework:** Spring Boot 3 (Java 17)
 * **Build Tool:** Maven / Gradle
-* **Database:** PostgreSQL (Production) / H2 (Dev)
+* **Database:** MySQL 
 * **Storage:** IPFS (via Pinata API)
 * **Deployment:** Railway
 * **Security:** SHA-256 Hash Verification
