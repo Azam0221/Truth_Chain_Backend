@@ -32,32 +32,43 @@ public class GeminiTextService {
     public RiskAssessment assessMetadataText(String gps, String timestamp, String lightLux, String gyroscope, String deviceModel) {
 
         String prompt = String.format("""
-            Act as a forensic metadata analyst. Verify if the environmental data matches the physical location context.
-            
-            Metadata:
-            - GPS Coordinates: %s
-            - Timestamp: %s
-            - Ambient Light: %s lux
-            - Device Orientation (Gyro): %s
-            - Device Model: %s
-            
-            Tasks:
-            1. LOCATION CONTEXT: Based on the GPS, is this likely an OUTDOOR area (park, road) or INDOOR area (building, station)?
-            2. PHYSICS CHECK: 
-               - If OUTDOOR: Does light match the sun position? (Noon = Bright).
-               - If INDOOR: Are artificial light levels plausible? (Noon can be dark/dim).
-            3. DEVICE CONSISTENCY:
-               - Is the Gyroscope data consistent with taking a photo? (e.g. Extreme angles might indicate tampering).
-            4. ANOMALY DETECTION:
-               - Flag if GPS is "Open Field" at Noon but light is 0 (Sensor Covered).
-            
-            Respond ONLY in JSON:
-            {
-              "riskScore": integer (0-100),
-              "locationContext": "OUTDOOR/INDOOR/UNKNOWN",
-              "reasoning": "Brief explanation including Gyro/Light analysis.",
-              "flags": ["list", "of", "red", "flags"]
-            }
+                SYSTEM_ROLE: You are 'TruthChain AI', a forensic metadata analyst. Your job is to calculate the probability of fraud before we spend resources on visual analysis.
+                
+                            INPUT DATA:
+                            - GPS: %s (Check the local time and environment for this coordinate)
+                            - UTC Timestamp: %s (Convert to Local Time)
+                            - Measured Light: %s Lux (captured via Camera ISO analysis)
+                            - Gyroscope: %s (Phone orientation)
+                            - Device: %s
+                
+                            YOUR TASKS (Step-by-Step Reasoning):
+                
+                            1. CALCULATE SOLAR STATUS:
+                               - Based on GPS + Timestamp, is the sun UP or DOWN?
+                               - If SUN IS DOWN (Night): Expected natural light is < 50 Lux.
+                               - If SUN IS UP (Day): Expected natural light is > 1000 Lux (Outdoors) or > 300 Lux (Indoors).
+                
+                            2. ANALYZE LIGHT SOURCE:
+                               - The user claims this is a real-world photo.
+                               - SCENARIO A (Screen Fraud): If it is NIGHT, but Light > 1000 Lux -> Highly suspicious of a screen close-up.
+                               - SCENARIO B (Vampire Fraud): If it is NOON (Day), but Light < 50 Lux -> Suspicious of a dark room/basement.
+                
+                            3. GYRO CHECK (The "Flat" Test):
+                               - A Gyro Z-value near 9.8 means the phone is lying flat (like scanning a document).
+                               - If GPS implies "Walking" but Gyro is "Perfectly Flat", flag it.
+                
+                            4. FINAL VERDICT:
+                               - Risk Score 0-30: Consistent. (e.g. Day + Bright, Night + Dark).
+                               - Risk Score 31-70: Anomalous but possible. (e.g. Night + Bright Streetlamp).
+                               - Risk Score 71-100: IMPOSSIBLE Physics. (e.g. Noon + Pitch Black).
+                
+                            OUTPUT (JSON ONLY):
+                            {
+                              "riskScore": integer,
+                              "locationContext": "e.g., 'New Delhi, Night-time'",
+                              "reasoning": "e.g., 'Solar mismatch: It is night in Delhi, but sensor shows daylight levels (2500 Lux). Likely a screen.'",
+                              "flags": ["Solar Mismatch", "High Artificial Light", "Gyro Static"]
+                            }
             """, gps, timestamp, lightLux, gyroscope, deviceModel);
 
         try {
@@ -66,6 +77,9 @@ public class GeminiTextService {
                             Map.of("parts", List.of(
                                     Map.of("text", prompt)
                             ))
+                    ),
+                    "generationConfig", Map.of(
+                            "response_mime_type", "application/json"
                     )
             );
 
