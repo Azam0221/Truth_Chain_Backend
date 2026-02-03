@@ -35,6 +35,12 @@ public class EvidenceRecord {
 
     private String storagePath;
 
+    private int riskScore;
+    private boolean isScreen;
+
+    @Column(columnDefinition = "TEXT")
+    private String aiReasoning;
+
     private LocalDateTime uploadedAt;
 
     @PrePersist
