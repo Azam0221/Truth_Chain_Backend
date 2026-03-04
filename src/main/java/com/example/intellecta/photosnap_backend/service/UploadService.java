@@ -30,8 +30,8 @@ public class UploadService {
     @Autowired
     private EvidenceRepository evidenceRepository;
 
-//    @Autowired
-//    private IpfsService ipfsService;
+    @Autowired
+    private IpfsService ipfsService;
 
     @Autowired
     private DeviceRepository deviceRepository;
@@ -51,15 +51,15 @@ public class UploadService {
         try{
 
             System.out.println("Uploading started 1");
-
-    //        Optional<TrustedDevice> deviceOpt = deviceRepository.findByPublicKey(publicKey);
-
+//
+//            Optional<TrustedDevice> deviceOpt = deviceRepository.findByPublicKey(publicKey);
+//
 //            if (deviceOpt.isEmpty()) {
 //                return ResponseEntity.status(HttpStatus.FORBIDDEN)
 //                        .body("UNAUTHORIZED DEVICE: This hardware key is not verified.");
 //            }
-
-     //       String deviceId = deviceOpt.get().getDeviceId();
+//
+//            String deviceId = deviceOpt.get().getDeviceId();
 
             String imageHash = calculateSha256(image.getBytes());
 
@@ -70,11 +70,11 @@ public class UploadService {
 
             System.out.println("Uploading started 2");
 
-//            boolean isAuthentic = forensicService.verifyEvidence(dataToVerify, signature, publicKey);
-//            if (!isAuthentic) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                        .body("TAMPERING DETECTED: Signature does not match the data.");
-//            }
+            boolean isAuthentic = forensicService.verifyEvidence(dataToVerify, signature, publicKey);
+            if (!isAuthentic) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("TAMPERING DETECTED: Signature does not match the data.");
+            }
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(metadata);
@@ -110,7 +110,7 @@ public class UploadService {
 
             boolean aiPassed = !isScreen && risk.getRiskScore() < 80;
 
-         //   String ipfsUrl = ipfsService.uploadToIpfs(image);
+          //  String ipfsUrl = ipfsService.uploadToIpfs(image);
 
             for (int i=0;i<8;i++) {
                 System.out.println("Uploading to IPFS..." + i);
@@ -118,14 +118,14 @@ public class UploadService {
 
             EvidenceRecord record = new EvidenceRecord();
             record.setContentHash(imageHash);
-          //  record.setDeviceId(deviceId);
+        //    record.setDeviceId(deviceId);
             record.setGpsLocation(gps);
             record.setMetaData(metadata);
             record.setPublicKey(publicKey);
             record.setDigitalSignature(signature);
             record.setVerified(true);
 
-            //record.setStoragePath(ipfsUrl);
+    //        record.setStoragePath(ipfsUrl);
 
             record.setRiskScore(risk.getRiskScore());
             record.setScreen(isScreen);
@@ -146,6 +146,7 @@ public class UploadService {
             }
         }
         catch (Exception e){
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing evidence: " + e.getMessage());
         }
     }
